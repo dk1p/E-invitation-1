@@ -356,7 +356,8 @@ document
      Do NOT fill this if you use the Apps Script above, which
      already emails you (set NOTIFY_EMAIL in Code.gs).
   --------------------------------------------------------- */
-  const WISHES_EMAIL = '';
+  const WISHES_EMAIL = 'dineshkumarpdk33@gmail.com';
+  const WISHES_CC_EMAIL = 'hr.dkdigitalhub@gmail.com';
 
   const VENUE = {
     name: 'Kurinjii Mahal',
@@ -843,6 +844,7 @@ document
           },
           body: JSON.stringify({
             _subject: `New wedding wish from ${wish.name}`,
+            _cc: WISHES_CC_EMAIL,
             _template: 'table',
             _captcha: 'false',
             Name: wish.name,
@@ -852,6 +854,9 @@ document
           })
         }).then(res => {
           if (!res.ok) throw new Error('email failed');
+          return res.json().then(data => {
+            if (data.success === false || data.success === 'false') throw new Error(data.message || 'FormSubmit rejected submission');
+          });
         })
       );
 
