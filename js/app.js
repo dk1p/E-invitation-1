@@ -233,513 +233,6 @@ openingVideo?.addEventListener('ended', enterInvitation);
 
 
 /* =========================================================
-   SCRATCH DATE REVEAL
-========================================================= */
-
-// One-swipe scratch reveal.
-// A tap alone never reveals a card.
-
-const revealCards = document.querySelectorAll('[data-reveal]');
-
-
-revealCards.forEach(card => {
-
-  let startX = 0;
-  let startY = 0;
-  let moved = false;
-  let active = false;
-
-  const threshold = 34;
-
-
-  card.addEventListener('pointerdown', e => {
-
-    if (card.classList.contains('revealed')) return;
-
-    active = true;
-
-    moved = false;
-
-    startX = e.clientX;
-
-    startY = e.clientY;
-
-    card.setPointerCapture(e.pointerId);
-
-  });
-
-
-  card.addEventListener('pointermove', e => {
-
-    if (!active || card.classList.contains('revealed')) return;
-
-    const dx = e.clientX - startX;
-
-    const dy = e.clientY - startY;
-
-    if (Math.hypot(dx, dy) >= threshold) {
-
-      moved = true;
-
-    }
-
-  });
-
-
-  const finish = e => {
-
-    if (!active) return;
-
-    active = false;
-
-
-    if (
-      moved &&
-      !card.classList.contains('revealed')
-    ) {
-
-      card.classList.add('revealed');
-
-    }
-
-
-    try {
-
-      card.releasePointerCapture(e.pointerId);
-
-    } catch (err) {}
-
-  };
-
-
-  card.addEventListener('pointerup', finish);
-
-  card.addEventListener('pointercancel', finish);
-
-});
-
-
-
-/* =========================================================
-   DATE REVEAL CELEBRATION
-========================================================= */
-
-const burst = document.getElementById('celebrationBurst');
-
-let burstShown = false;
-
-
-function celebrateDateReveal() {
-
-  if (burstShown || !burst) return;
-
-  burstShown = true;
-
-  burst.classList.add('show');
-
-
-  const pieces = [
-    '✦',
-    '✧',
-    '•',
-    '❋',
-    '✺',
-    '▪',
-    '✹',
-    '✷',
-    '✸',
-    '❈',
-    '✼',
-    '✧',
-    '○',
-    '●',
-    '◦',
-    '·',
-    '✦'
-  ];
-
-
-  for (let i = 0; i < 180; i++) {
-
-    const piece = document.createElement('span');
-
-    piece.className = 'burst-piece';
-
-    piece.textContent =
-      pieces[Math.floor(Math.random() * pieces.length)];
-
-
-    piece.style.left =
-      `${50 + (Math.random() * 10 - 5)}%`;
-
-
-    piece.style.top =
-      `${36 + (Math.random() * 8 - 4)}%`;
-
-
-    piece.style.setProperty(
-      '--x',
-      `${(Math.random() * 2 - 1) * 58}vw`
-    );
-
-
-    piece.style.setProperty(
-      '--y',
-      `${32 + Math.random() * 72}vh`
-    );
-
-
-    piece.style.setProperty(
-      '--r',
-      `${Math.random() * 720 - 360}deg`
-    );
-
-
-    piece.style.setProperty(
-      '--d',
-      `${2.2 + Math.random() * 2.8}s`
-    );
-
-
-    piece.style.setProperty(
-      '--delay',
-      `${Math.random() * 0.75}s`
-    );
-
-
-    burst.appendChild(piece);
-
-  }
-
-
-  setTimeout(() => {
-
-    burst.classList.remove('show');
-
-  }, 4300);
-
-
-  setTimeout(() => {
-
-    burst.innerHTML = '';
-
-  }, 4800);
-
-}
-
-
-
-/* =========================================================
-   CHECK ALL 3 DATE CARDS
-========================================================= */
-
-revealCards.forEach(card => {
-
-  const observer = new MutationObserver(() => {
-
-    const count =
-      document.querySelectorAll(
-        '[data-reveal].revealed'
-      ).length;
-
-
-    if (count === 3) {
-
-      setTimeout(
-        celebrateDateReveal,
-        260
-      );
-
-    }
-
-  });
-
-
-  observer.observe(
-    card,
-    {
-      attributes: true,
-      attributeFilter: ['class']
-    }
-  );
-
-});
-
-
-
-/* =========================================================
-   WEDDING COUNTDOWN
-========================================================= */
-
-const weddingDate =
-  new Date(
-    '2026-11-15T07:45:00+05:30'
-  ).getTime();
-
-
-function tick() {
-
-  let diff =
-    Math.max(
-      0,
-      weddingDate - Date.now()
-    );
-
-
-  const d =
-    Math.floor(diff / 86400000);
-
-  diff %= 86400000;
-
-
-  const h =
-    Math.floor(diff / 3600000);
-
-  diff %= 3600000;
-
-
-  const m =
-    Math.floor(diff / 60000);
-
-  diff %= 60000;
-
-
-  const s =
-    Math.floor(diff / 1000);
-
-
-  document.getElementById('days').textContent =
-    String(d).padStart(2, '0');
-
-
-  document.getElementById('hours').textContent =
-    String(h).padStart(2, '0');
-
-
-  document.getElementById('mins').textContent =
-    String(m).padStart(2, '0');
-
-
-  document.getElementById('secs').textContent =
-    String(s).padStart(2, '0');
-
-}
-
-
-tick();
-
-setInterval(tick, 1000);
-
-
-
-/* =========================================================
-   STORY CAROUSEL
-========================================================= */
-
-const track =
-  document.getElementById('storyTrack');
-
-const frame =
-  document.querySelector('.story-frame');
-
-const storyCount =
-  document.getElementById('storyCount');
-
-const prevBtn =
-  document.getElementById('storyPrev');
-
-const nextBtn =
-  document.getElementById('storyNext');
-
-
-let storyIndex = 0;
-
-let startX = 0;
-
-let deltaX = 0;
-
-let dragging = false;
-
-
-
-function storyTotal() {
-  return track.querySelectorAll('img').length;
-}
-
-
-function updateStory() {
-
-  const last = storyTotal() - 1;
-
-  storyIndex = Math.max(0, Math.min(last, storyIndex));
-
-
-  track.style.transform =
-    `translateX(-${storyIndex * 100}%)`;
-
-
-  storyCount.textContent =
-    `${String(storyIndex + 1).padStart(2, '0')} / ${String(last + 1).padStart(2, '0')}`;
-
-
-  prevBtn.disabled =
-    storyIndex === 0;
-
-
-  nextBtn.disabled =
-    storyIndex === last;
-
-
-  prevBtn.style.opacity =
-    storyIndex === 0
-      ? '.45'
-      : '1';
-
-
-  nextBtn.style.opacity =
-    storyIndex === last
-      ? '.45'
-      : '1';
-
-}
-
-
-
-function goStory(step) {
-
-  storyIndex =
-    Math.max(
-      0,
-      Math.min(
-        storyTotal() - 1,
-        storyIndex + step
-      )
-    );
-
-
-  updateStory();
-
-}
-
-
-
-prevBtn.addEventListener(
-  'click',
-  () => goStory(-1)
-);
-
-
-nextBtn.addEventListener(
-  'click',
-  () => goStory(1)
-);
-
-
-
-/* =========================================================
-   STORY SWIPE
-========================================================= */
-
-frame.addEventListener(
-  'pointerdown',
-  e => {
-
-    dragging = true;
-
-    startX = e.clientX;
-
-    deltaX = 0;
-
-    frame.setPointerCapture(
-      e.pointerId
-    );
-
-  }
-);
-
-
-frame.addEventListener(
-  'pointermove',
-  e => {
-
-    if (dragging) {
-
-      deltaX =
-        e.clientX - startX;
-
-    }
-
-  }
-);
-
-
-frame.addEventListener(
-  'pointerup',
-  e => {
-
-    if (!dragging) return;
-
-
-    dragging = false;
-
-
-    if (
-      Math.abs(deltaX) > 45
-    ) {
-
-      goStory(
-        deltaX < 0
-          ? 1
-          : -1
-      );
-
-    }
-
-
-    try {
-
-      frame.releasePointerCapture(
-        e.pointerId
-      );
-
-    } catch (err) {}
-
-  }
-);
-
-
-frame.addEventListener(
-  'pointercancel',
-  () => {
-
-    dragging = false;
-
-  }
-);
-
-
-/* A missing image file is removed from the carousel automatically */
-
-track.querySelectorAll('img').forEach(img => {
-
-  if (img.complete && img.naturalWidth === 0) {
-    img.remove();
-    return;
-  }
-
-  img.addEventListener('error', () => {
-    img.remove();
-    updateStory();
-  });
-
-});
-
-
-updateStory();
-
-
-
-/* =========================================================
    EVENT VIDEOS
    AUTOPLAY WHEN VISIBLE
 ========================================================= */
@@ -1488,5 +981,564 @@ document
 
   updateCount();
   loadWishes();
+
+})();
+
+
+
+/* =========================================================
+   GALLERY + LIGHTBOX
+========================================================= */
+
+(() => {
+
+  const grid = document.getElementById('galleryGrid');
+  const box = document.getElementById('lightbox');
+
+  if (!grid || !box) return;
+
+  const lbImg = document.getElementById('lbImg');
+  const lbCount = document.getElementById('lbCount');
+  const lbClose = document.getElementById('lbClose');
+  const lbPrev = document.getElementById('lbPrev');
+  const lbNext = document.getElementById('lbNext');
+  const root = document.documentElement;
+
+  let current = 0;
+  let opener = null;
+  let swapTimer;
+
+
+  // Lightbox follows what the guest sees on screen: top to bottom, left to right
+  const items = () => [...grid.querySelectorAll('.gallery-item')].sort((a, b) => {
+    const ra = a.getBoundingClientRect();
+    const rb = b.getBoundingClientRect();
+    return Math.abs(ra.top - rb.top) > 8 ? ra.top - rb.top : ra.left - rb.left;
+  });
+
+
+  /* Use each photo's real shape, and drop any file that is missing */
+
+  function prepare(item) {
+
+    const img = item.querySelector('img');
+
+    const ready = () => {
+
+      if (img.naturalWidth && img.naturalHeight) {
+        item.style.setProperty(
+          '--ar',
+          (img.naturalWidth / img.naturalHeight).toFixed(4)
+        );
+      }
+
+      // Photos marked data-auto choose portrait or landscape from the real file
+      if (item.hasAttribute('data-auto') && img.naturalWidth && img.naturalHeight) {
+        const land = img.naturalWidth / img.naturalHeight > 1.1;
+        item.classList.toggle('is-land', land);
+        item.classList.toggle('is-port', !land);
+      }
+
+      item.classList.add('loaded');
+
+    };
+
+    if (img.complete) {
+      img.naturalWidth ? ready() : item.remove();
+      return;
+    }
+
+    img.addEventListener('load', ready, { once: true });
+    img.addEventListener('error', () => item.remove(), { once: true });
+
+  }
+
+  items().forEach(prepare);
+
+
+  /* Lightbox */
+
+  function show(index) {
+
+    const list = items();
+
+    if (!list.length) return;
+
+    current = (index + list.length) % list.length;
+
+    const src = list[current].querySelector('img');
+
+    clearTimeout(swapTimer);
+    lbImg.classList.add('swap');
+
+    swapTimer = setTimeout(() => {
+
+      lbImg.src = src.currentSrc || src.src;
+      lbImg.alt = src.alt;
+      lbImg.classList.remove('swap');
+
+    }, 120);
+
+    lbCount.textContent =
+      `${String(current + 1).padStart(2, '0')} / ${String(list.length).padStart(2, '0')}`;
+
+    const multiple = list.length > 1;
+    lbPrev.hidden = !multiple;
+    lbNext.hidden = !multiple;
+
+    // Warm the neighbours so next/previous feels instant
+    [current - 1, current + 1].forEach(i => {
+      const n = list[(i + list.length) % list.length].querySelector('img');
+      new Image().src = n.currentSrc || n.src;
+    });
+
+  }
+
+
+  function open(index, trigger) {
+
+    opener = trigger || null;
+
+    box.hidden = false;
+    root.classList.add('lb-open');
+
+    lbImg.classList.remove('swap');
+    show(index);
+
+    requestAnimationFrame(() => box.classList.add('open'));
+
+    lbClose.focus({ preventScroll: true });
+
+  }
+
+
+  function close() {
+
+    box.classList.remove('open');
+    root.classList.remove('lb-open');
+
+    setTimeout(() => { box.hidden = true; }, 300);
+
+    if (opener) opener.focus({ preventScroll: true });
+
+  }
+
+
+  grid.addEventListener('click', e => {
+
+    const item = e.target.closest('.gallery-item');
+
+    if (item) open(items().indexOf(item), item);
+
+  });
+
+  lbClose.addEventListener('click', close);
+  lbPrev.addEventListener('click', () => show(current - 1));
+  lbNext.addEventListener('click', () => show(current + 1));
+
+  // Tap the dark area around the photo to close
+  box.addEventListener('click', e => {
+    if (e.target === box) close();
+  });
+
+
+  document.addEventListener('keydown', e => {
+
+    if (box.hidden) return;
+
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowLeft') show(current - 1);
+    else if (e.key === 'ArrowRight') show(current + 1);
+    else if (e.key === 'Tab') {
+
+      // Keep keyboard focus inside the viewer
+      const focusable = [lbClose, lbPrev, lbNext].filter(b => !b.hidden);
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+
+    }
+
+  });
+
+
+  /* Swipe left / right on touch screens */
+
+  let touchX = null;
+
+  box.addEventListener('touchstart', e => {
+    touchX = e.touches[0].clientX;
+  }, { passive: true });
+
+  box.addEventListener('touchend', e => {
+
+    if (touchX === null) return;
+
+    const dx = e.changedTouches[0].clientX - touchX;
+    touchX = null;
+
+    if (Math.abs(dx) > 50) show(current + (dx < 0 ? 1 : -1));
+
+  }, { passive: true });
+
+})();
+
+
+/* =========================================================
+   SAVE THE DATE: scratch-to-reveal + live countdown
+   Target date/time is the data-target attribute on
+   #countdown in index.html (ISO format, with timezone).
+========================================================= */
+
+(() => {
+
+  const section = document.getElementById('countdown');
+  const plaque = document.getElementById('cdPlaque');
+  const canvas = document.getElementById('cdScratch');
+  const confettiCanvas = document.getElementById('cdConfetti');
+  const timer = document.getElementById('cdTimer');
+  const note = document.getElementById('cdNote');
+
+  if (!section || !plaque || !canvas || !timer) return;
+
+  const target = new Date(section.dataset.target).getTime();
+  if (!Number.isFinite(target)) return;
+
+  const reduceMotion =
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const units = {
+    days: document.getElementById('cdDays'),
+    hours: document.getElementById('cdHours'),
+    mins: document.getElementById('cdMins'),
+    secs: document.getElementById('cdSecs')
+  };
+
+  const ctx = canvas.getContext('2d');
+  const CELL = 12;          // coverage grid size (px)
+  const REVEAL_AT = 0.5;    // share of the foil to scratch before it clears
+
+  let w = 0, h = 0, cols = 0, rows = 0, cells, covered = 0;
+  let brush = 24;
+  let revealed = false, drawing = false, last = null, tickId;
+
+
+  /* ---------------------------------------------------------
+     FOIL
+  --------------------------------------------------------- */
+
+  function paintFoil() {
+
+    w = plaque.offsetWidth;
+    h = plaque.offsetHeight;
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = 'source-over';
+
+    const g = ctx.createLinearGradient(0, 0, w, h);
+    g.addColorStop(0, '#e6c27a');
+    g.addColorStop(.25, '#f8e7bd');
+    g.addColorStop(.5, '#d9b565');
+    g.addColorStop(.75, '#f4dca5');
+    g.addColorStop(1, '#cfa755');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = 'rgba(255,255,255,.18)';
+    ctx.lineWidth = 1;
+    for (let x = -h; x < w; x += 9) {
+      ctx.beginPath();
+      ctx.moveTo(x, h);
+      ctx.lineTo(x + h, 0);
+      ctx.stroke();
+    }
+
+    for (let i = 0, n = Math.round(w * h / 60); i < n; i++) {
+      ctx.fillStyle = Math.random() < .5
+        ? 'rgba(255,255,255,.22)'
+        : 'rgba(120,80,20,.10)';
+      ctx.fillRect(Math.random() * w, Math.random() * h, 1.2, 1.2);
+    }
+
+    const cx = w / 2, cy = h / 2, rad = Math.min(h * .42, 56);
+    const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+    glow.addColorStop(0, 'rgba(255,244,214,.9)');
+    glow.addColorStop(1, 'rgba(255,244,214,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#6b4a32';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '600 11px Montserrat, sans-serif';
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '2px';
+    ctx.fillText('\u273F', cx, cy - 20);
+    ctx.fillText('SCRATCH TO', cx, cy - 4);
+    ctx.fillText('REVEAL', cx, cy + 12);
+
+    brush = Math.max(18, h * .2);
+    cols = Math.ceil(w / CELL);
+    rows = Math.ceil(h / CELL);
+    cells = new Uint8Array(cols * rows);
+    covered = 0;
+  }
+
+
+  /* ---------------------------------------------------------
+     SCRATCHING
+  --------------------------------------------------------- */
+
+  function mark(x, y) {
+
+    const x0 = Math.max(0, Math.floor((x - brush) / CELL));
+    const x1 = Math.min(cols - 1, Math.floor((x + brush) / CELL));
+    const y0 = Math.max(0, Math.floor((y - brush) / CELL));
+    const y1 = Math.min(rows - 1, Math.floor((y + brush) / CELL));
+
+    for (let r = y0; r <= y1; r++) {
+      for (let c = x0; c <= x1; c++) {
+
+        const i = r * cols + c;
+        if (cells[i]) continue;
+
+        const dx = c * CELL + CELL / 2 - x;
+        const dy = r * CELL + CELL / 2 - y;
+
+        if (dx * dx + dy * dy <= brush * brush) {
+          cells[i] = 1;
+          covered++;
+        }
+
+      }
+    }
+  }
+
+  function scratch(from, to) {
+
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = brush * 2;
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
+
+    const dist = Math.hypot(to.x - from.x, to.y - from.y);
+    const steps = Math.max(1, Math.ceil(dist / (brush / 2)));
+
+    for (let s = 1; s <= steps; s++) {
+      mark(
+        from.x + (to.x - from.x) * s / steps,
+        from.y + (to.y - from.y) * s / steps
+      );
+    }
+
+    if (covered / cells.length >= REVEAL_AT) reveal();
+  }
+
+  const point = e => {
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  };
+
+  canvas.addEventListener('pointerdown', e => {
+    if (revealed) return;
+    drawing = true;
+    last = point(e);
+    canvas.setPointerCapture?.(e.pointerId);
+    scratch(last, last);
+  });
+
+  canvas.addEventListener('pointermove', e => {
+    if (!drawing || revealed) return;
+    const p = point(e);
+    scratch(last, p);
+    last = p;
+  });
+
+  const stop = () => { drawing = false; last = null; };
+  canvas.addEventListener('pointerup', stop);
+  canvas.addEventListener('pointercancel', stop);
+
+  // Keyboard users can reveal without scratching
+  canvas.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      reveal();
+    }
+  });
+
+
+  /* ---------------------------------------------------------
+     REVEAL
+  --------------------------------------------------------- */
+
+  function reveal() {
+
+    if (revealed) return;
+    revealed = true;
+    drawing = false;
+
+    plaque.classList.add('is-revealed');
+    canvas.setAttribute('aria-hidden', 'true');
+    canvas.tabIndex = -1;
+    setTimeout(() => { canvas.hidden = true; }, reduceMotion ? 0 : 1000);
+
+    launchConfetti();
+
+    setTimeout(() => {
+      timer.classList.add('is-on');
+      tick();
+      tickId = setInterval(tick, 1000);
+    }, reduceMotion ? 0 : 450);
+  }
+
+
+  /* ---------------------------------------------------------
+     COUNTDOWN
+  --------------------------------------------------------- */
+
+  function setUnit(el, value) {
+
+    const text = String(value).padStart(2, '0');
+    if (el.textContent === text) return;
+
+    el.textContent = text;
+
+    if (!reduceMotion && el.animate) {
+      el.animate(
+        [
+          { opacity: .25, transform: 'translateY(-5px)' },
+          { opacity: 1, transform: 'none' }
+        ],
+        { duration: 280, easing: 'ease-out' }
+      );
+    }
+  }
+
+  function tick() {
+
+    const diff = Math.max(0, target - Date.now());
+
+    setUnit(units.days, Math.floor(diff / 864e5));
+    setUnit(units.hours, Math.floor(diff / 36e5) % 24);
+    setUnit(units.mins, Math.floor(diff / 6e4) % 60);
+    setUnit(units.secs, Math.floor(diff / 1e3) % 60);
+
+    if (diff === 0) {
+      clearInterval(tickId);
+      if (note) note.hidden = false;
+    }
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (revealed && !document.hidden) tick();
+  });
+
+
+  /* ---------------------------------------------------------
+     CONFETTI
+  --------------------------------------------------------- */
+
+  function launchConfetti() {
+
+    if (reduceMotion || !confettiCanvas) return;
+
+    const c = confettiCanvas;
+    const cx = c.getContext('2d');
+    const W = section.offsetWidth;
+    const H = section.offsetHeight;
+    const dp = Math.min(window.devicePixelRatio || 1, 2);
+
+    c.width = W * dp;
+    c.height = H * dp;
+    cx.setTransform(dp, 0, 0, dp, 0, 0);
+
+    const colors = [
+      '#caa34a', '#e8c46a', '#d89aa2', '#e7a3ad',
+      '#8aa56a', '#fff3dc', '#b9525f'
+    ];
+
+    const pieces = Array.from({ length: 110 }, () => ({
+      x: Math.random() * W,
+      y: -20 - Math.random() * H * .5,
+      w: 5 + Math.random() * 6,
+      h: 3 + Math.random() * 5,
+      vx: (Math.random() - .5) * .8,
+      vy: 1.2 + Math.random() * 1.8,
+      rot: Math.random() * 6.28,
+      vr: (Math.random() - .5) * .2,
+      ph: Math.random() * 6.28,
+      color: colors[(Math.random() * colors.length) | 0],
+      round: Math.random() < .3
+    }));
+
+    (function frame() {
+
+      cx.clearRect(0, 0, W, H);
+      let alive = 0;
+
+      for (const p of pieces) {
+
+        p.y += p.vy;
+        p.ph += .05;
+        p.x += p.vx + Math.sin(p.ph) * .6;
+        p.rot += p.vr;
+
+        if (p.y > H + 20) continue;
+        alive++;
+
+        cx.save();
+        cx.globalAlpha = p.y > H * .85 ? Math.max(0, (H - p.y) / (H * .15)) : 1;
+        cx.translate(p.x, p.y);
+        cx.rotate(p.rot);
+        cx.scale(1, Math.cos(p.ph));
+        cx.fillStyle = p.color;
+
+        if (p.round) {
+          cx.beginPath();
+          cx.arc(0, 0, p.h / 2, 0, Math.PI * 2);
+          cx.fill();
+        } else {
+          cx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        }
+
+        cx.restore();
+      }
+
+      if (alive) requestAnimationFrame(frame);
+      else cx.clearRect(0, 0, W, H);
+
+    })();
+  }
+
+
+  /* ---------------------------------------------------------
+     INIT
+  --------------------------------------------------------- */
+
+  (document.fonts?.ready || Promise.resolve()).then(paintFoil);
+
+  // Repaint only if the plaque really changes size before it is scratched
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(() => {
+      if (revealed || drawing) return;
+      if (plaque.offsetWidth !== w || plaque.offsetHeight !== h) paintFoil();
+    }).observe(plaque);
+  }
 
 })();
