@@ -1189,3 +1189,326 @@ document
   }, { passive: true });
 
 })();
+
+
+
+/* =========================================================
+   WEDDING COUNTDOWN
+   Muhurtham: Sunday 15 November 2026, 7:45 AM IST
+========================================================= */
+
+(() => {
+
+  const target = new Date('2026-11-15T07:45:00+05:30').getTime();
+
+  const parts = {
+    days: document.getElementById('days'),
+    hours: document.getElementById('hours'),
+    mins: document.getElementById('mins'),
+    secs: document.getElementById('secs')
+  };
+
+  const done = document.getElementById('countdownDone');
+  const box = document.getElementById('countdown');
+
+  if (!parts.days || !box) return;
+
+  const pad = n => String(n).padStart(2, '0');
+
+  function tick() {
+
+    let diff = Math.max(0, target - Date.now());
+
+    const d = Math.floor(diff / 86400000); diff %= 86400000;
+    const h = Math.floor(diff / 3600000);  diff %= 3600000;
+    const m = Math.floor(diff / 60000);    diff %= 60000;
+    const s = Math.floor(diff / 1000);
+
+    parts.days.textContent = pad(d);
+    parts.hours.textContent = pad(h);
+    parts.mins.textContent = pad(m);
+    parts.secs.textContent = pad(s);
+
+    if (target - Date.now() <= 0) {
+      done.hidden = false;
+      clearInterval(timer);
+    }
+
+  }
+
+  const timer = setInterval(tick, 1000);
+  tick();
+
+})();
+
+
+/* =========================================================
+   SAVE THE DATE
+   - the picture fades in when the section opens
+   - scratch the plate to reveal the date and the countdown
+========================================================= */
+
+(() => {
+
+  const section = document.getElementById('saveDate');
+
+  if (!section) return;
+
+  const reduceMotion =
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+
+  /* ---------------------------------------------------------
+     PICTURE
+     Fades in the first time the section scrolls into view
+  --------------------------------------------------------- */
+
+  const photoObserver = new IntersectionObserver(entries => {
+
+    if (entries[0].isIntersecting) {
+      section.classList.add('photo-open');
+      photoObserver.disconnect();
+    }
+
+  }, { threshold: 0.3 });
+
+  photoObserver.observe(section);
+
+
+  /* ---------------------------------------------------------
+     SCRATCH TO REVEAL
+  --------------------------------------------------------- */
+
+  const plate = document.getElementById('sdPlate');
+  const canvas = document.getElementById('sdScratch');
+  const confetti = document.getElementById('sdConfetti');
+
+  if (!plate || !canvas) return;
+
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+  let dpr = 1;
+  let drawing = false;
+  let last = null;
+  let revealed = false;
+  let lastCheck = 0;
+  let paintedWidth = 0;
+
+  function paintCover() {
+
+    const rect = plate.getBoundingClientRect();
+
+    if (!rect.width) return;
+
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    paintedWidth = rect.width;
+
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.globalCompositeOperation = 'source-over';
+
+    const g = ctx.createLinearGradient(0, 0, w, h);
+    g.addColorStop(0, '#e9cf9f');
+    g.addColorStop(.5, '#f6e3bd');
+    g.addColorStop(1, '#e4c78f');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    // fine foil speckle
+    for (let i = 0; i < 520; i++) {
+      ctx.fillStyle = Math.random() > .5
+        ? 'rgba(255,255,255,.35)'
+        : 'rgba(150,105,40,.18)';
+      ctx.fillRect(Math.random() * w, Math.random() * h, dpr * 1.4, dpr * 1.4);
+    }
+
+    ctx.strokeStyle = 'rgba(160,115,40,.55)';
+    ctx.lineWidth = dpr;
+    ctx.strokeRect(7 * dpr, 7 * dpr, w - 14 * dpr, h - 14 * dpr);
+
+    ctx.fillStyle = '#7a5a2a';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.font = `600 ${12 * dpr}px Montserrat, 'Segoe UI', sans-serif`;
+    if ('letterSpacing' in ctx) ctx.letterSpacing = `${3 * dpr}px`;
+    ctx.fillText('SCRATCH TO REVEAL', w / 2, h / 2 - 8 * dpr);
+
+    ctx.font = `italic 500 ${15 * dpr}px 'Cormorant Garamond', Georgia, serif`;
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+    ctx.fillText('swipe across the card', w / 2, h / 2 + 14 * dpr);
+
+  }
+
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve())
+    .then(paintCover);
+
+  paintCover();
+
+  new ResizeObserver(() => {
+
+    if (revealed || drawing) return;
+
+    if (Math.abs(plate.getBoundingClientRect().width - paintedWidth) > 1) paintCover();
+
+  }).observe(plate);
+
+
+  function point(e) {
+
+    const r = canvas.getBoundingClientRect();
+
+    return {
+      x: (e.clientX - r.left) * (canvas.width / r.width),
+      y: (e.clientY - r.top) * (canvas.height / r.height)
+    };
+
+  }
+
+  function scratch(from, to) {
+
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 40 * dpr;
+
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
+
+  }
+
+  function clearedShare() {
+
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let clear = 0;
+    let total = 0;
+
+    for (let i = 3; i < data.length; i += 64) {
+      total++;
+      if (data[i] < 40) clear++;
+    }
+
+    return clear / total;
+
+  }
+
+  canvas.addEventListener('pointerdown', e => {
+
+    if (revealed) return;
+
+    drawing = true;
+    last = point(e);
+
+    scratch(last, { x: last.x + .1, y: last.y });
+
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+
+  });
+
+  canvas.addEventListener('pointermove', e => {
+
+    if (!drawing || revealed) return;
+
+    const p = point(e);
+
+    scratch(last, p);
+    last = p;
+
+    const now = performance.now();
+
+    if (now - lastCheck > 160) {
+      lastCheck = now;
+      if (clearedShare() > .42) reveal();
+    }
+
+  });
+
+  const stop = () => {
+
+    if (!drawing) return;
+
+    drawing = false;
+
+    if (!revealed && clearedShare() > .42) reveal();
+
+  };
+
+  canvas.addEventListener('pointerup', stop);
+  canvas.addEventListener('pointercancel', stop);
+
+  // Keyboard users can reveal with Enter or Space
+  canvas.addEventListener('keydown', e => {
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      reveal();
+    }
+
+  });
+
+
+  function reveal() {
+
+    if (revealed) return;
+
+    revealed = true;
+    drawing = false;
+
+    section.classList.add('is-revealed');
+    canvas.setAttribute('aria-hidden', 'true');
+    canvas.tabIndex = -1;
+
+    petals();
+
+  }
+
+
+  function petals() {
+
+    if (reduceMotion || !confetti) return;
+
+    const s = section.getBoundingClientRect();
+    const p = plate.getBoundingClientRect();
+
+    const cx = p.left - s.left + p.width / 2;
+    const cy = p.top - s.top + p.height / 2;
+
+    const glyphs = ['✿', '❀', '✦', '❁', '•', '✧'];
+    const colors = ['#e9709a', '#f4a5be', '#e8b53a', '#d4466f', '#f3c340', '#b8863a'];
+
+    const pieces = [];
+
+    for (let i = 0; i < 70; i++) {
+
+      const piece = document.createElement('span');
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 60 + Math.random() * 190;
+
+      piece.className = 'sd-petal';
+      piece.textContent = glyphs[i % glyphs.length];
+      piece.style.left = `${cx}px`;
+      piece.style.top = `${cy}px`;
+      piece.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+      piece.style.setProperty('--dy', `${Math.sin(angle) * dist * .6 + 120 + Math.random() * 160}px`);
+      piece.style.setProperty('--r', `${Math.random() * 600 - 300}deg`);
+      piece.style.setProperty('--s', `${12 + Math.random() * 14}px`);
+      piece.style.setProperty('--c', colors[Math.floor(Math.random() * colors.length)]);
+      piece.style.setProperty('--d', `${2.2 + Math.random() * 1.8}s`);
+      piece.style.setProperty('--dl', `${Math.random() * .35}s`);
+
+      confetti.appendChild(piece);
+      pieces.push(piece);
+
+    }
+
+    setTimeout(() => pieces.forEach(el => el.remove()), 4600);
+
+  }
+
+})();
