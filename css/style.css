@@ -2188,3 +2188,336 @@ html.lb-open body {
         width: min(1080px,100%)
     }
 }
+
+/* =========================================================
+   SAVE THE DATE: picture, scratch-to-reveal date, countdown
+========================================================= */
+.save-date {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    padding: 0 0 clamp(40px,7vw,72px);
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 50% 38%,rgba(255,252,244,.9),rgba(255,252,244,0) 62%),
+        repeating-linear-gradient(115deg,rgba(255,255,255,.0) 0 90px,rgba(255,255,255,.35) 90px 96px,rgba(255,255,255,0) 96px 190px),
+        linear-gradient(180deg,#fcf6ea,#f8ecd8 55%,#fbf2e3)
+}
+
+.sd-stage {
+    position: relative;
+    width: min(100%,620px);
+    margin: 0 auto;
+    padding: 0 clamp(14px,4vw,28px) clamp(110px,26vw,150px)
+}
+
+.sd-top {
+    display: block;
+    width: calc(100% + clamp(28px,8vw,56px));
+    margin: 0 calc(-1 * clamp(14px,4vw,28px));
+    height: auto;
+    pointer-events: none
+}
+
+.sd-flame {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: sdFlicker 2.2s ease-in-out infinite
+}
+
+@keyframes sdFlicker {
+    0%,100% { transform: scale(1,1) }
+    30% { transform: scale(.92,1.08) }
+    60% { transform: scale(1.05,.95) }
+}
+
+/* Single picture: fades in when the section opens */
+.sd-photo {
+    position: relative;
+    width: min(58%,330px);
+    margin: -24% auto clamp(18px,4vw,28px)
+}
+
+.sd-photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 300 / 440;
+    object-fit: cover;
+    border-radius: 18px;
+    box-shadow: 0 16px 36px rgba(120,80,30,.22);
+    opacity: 0;
+    transform: scale(.96);
+    transition: opacity 1.6s ease .35s,transform 1.8s cubic-bezier(.2,.7,.2,1) .35s
+}
+
+.save-date.photo-open .sd-photo img {
+    opacity: 1;
+    transform: none
+}
+
+/* Title */
+.sd-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px,3vw,18px);
+    margin: clamp(10px,3vw,18px) 0 clamp(14px,3vw,20px)
+}
+
+.sd-title h2 {
+    margin: 0;
+    font-style: italic;
+    font-size: clamp(2rem,1.4rem + 2.8vw,3rem);
+    white-space: nowrap
+}
+
+.sd-rule {
+    flex: 1 1 0;
+    max-width: 90px;
+    height: 1px;
+    background: linear-gradient(90deg,transparent,#c9a858)
+}
+
+.sd-rule:last-child {
+    transform: scaleX(-1)
+}
+
+/* Scratch plate */
+.sd-plate {
+    position: relative;
+    width: min(100%,440px);
+    min-height: clamp(112px,28vw,138px);
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    border: 1px solid #d9b765;
+    border-radius: 14px;
+    background: linear-gradient(135deg,#fbefd8,#f4dfb8 55%,#f9ead0);
+    box-shadow: 0 12px 26px rgba(120,80,30,.16),inset 0 0 0 5px rgba(255,255,255,.35);
+    overflow: hidden
+}
+
+.sd-plate:before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid rgba(201,168,88,.65);
+    border-radius: 9px;
+    pointer-events: none
+}
+
+.sd-date {
+    padding: 14px 20px;
+    text-align: center
+}
+
+.sd-date p {
+    margin: 0
+}
+
+.sd-kicker,
+.sd-sub {
+    font-family: var(--font-ui);
+    font-size: max(.66rem,10.5px);
+    font-weight: 600;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--accent-text)
+}
+
+.sd-big {
+    margin: 4px 0 !important;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(2rem,1.3rem + 3.4vw,3.1rem);
+    line-height: 1.1;
+    letter-spacing: .06em;
+    color: #6f2f3a
+}
+
+.sd-scratch {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    cursor: pointer;
+    touch-action: pan-y;
+    transition: opacity .8s ease
+}
+
+.sd-scratch:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -4px
+}
+
+.sd-shine {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(105deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);
+    transform: translateX(-130%);
+    animation: sdShine 3.4s ease-in-out 1s infinite
+}
+
+@keyframes sdShine {
+    55%,100% { transform: translateX(130%) }
+}
+
+.save-date.is-revealed .sd-scratch {
+    opacity: 0;
+    pointer-events: none
+}
+
+.save-date.is-revealed .sd-shine {
+    display: none
+}
+
+.save-date.is-revealed .sd-plate {
+    animation: sdGlow 1.6s ease-out
+}
+
+@keyframes sdGlow {
+    0% { box-shadow: 0 0 0 0 rgba(201,168,88,.7),0 12px 26px rgba(120,80,30,.16) }
+    100% { box-shadow: 0 0 0 26px rgba(201,168,88,0),0 12px 26px rgba(120,80,30,.16) }
+}
+
+/* Countdown shown after the date is revealed */
+.sd-countdown {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    width: min(100%,440px);
+    margin: clamp(16px,4vw,24px) auto 0;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .9s ease .5s,transform .9s ease .5s
+}
+
+.save-date.is-revealed .sd-countdown {
+    opacity: 1;
+    transform: none
+}
+
+.sd-countdown > div {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 2px
+}
+
+.sd-countdown > div + div:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 12%;
+    bottom: 12%;
+    width: 1px;
+    background: linear-gradient(180deg,transparent,#c9a858,transparent)
+}
+
+.sd-countdown strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem,1.2rem + 3.2vw,2.8rem);
+    font-weight: 600;
+    line-height: 1.05;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums
+}
+
+.sd-countdown span {
+    margin-top: 4px;
+    font-family: var(--font-ui);
+    font-size: max(.62rem,10px);
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--accent-text)
+}
+
+.countdown-done {
+    margin: 18px 0 0;
+    text-align: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.3rem,1.1rem + 1vw,1.8rem);
+    color: var(--accent)
+}
+
+.countdown-done[hidden] {
+    display: none
+}
+
+/* Lotus corners */
+.sd-lotus {
+    position: absolute;
+    bottom: -2px;
+    width: min(40%,230px);
+    height: auto;
+    pointer-events: none
+}
+
+.sd-lotus-l { left: -4% }
+.sd-lotus-r { right: -4%; transform: scaleX(-1) }
+
+/* Petals that fall when the date is revealed */
+.sd-confetti {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    overflow: hidden;
+    pointer-events: none
+}
+
+.sd-petal {
+    position: absolute;
+    font-size: var(--s,16px);
+    color: var(--c,#e9709a);
+    opacity: 0;
+    animation: sdFall var(--d,3s) ease-out var(--dl,0s) forwards
+}
+
+@keyframes sdFall {
+    0% { opacity: 0; transform: translate(0,0) rotate(0) }
+    12% { opacity: 1 }
+    100% { opacity: 0; transform: translate(var(--dx),var(--dy)) rotate(var(--r)) }
+}
+
+@media(prefers-reduced-motion:reduce) {
+    .sd-flame,
+    .sd-shine { animation: none }
+
+    .sd-photo img {
+        opacity: 1;
+        transform: none;
+        transition: none
+    }
+
+    .sd-countdown {
+        transition: none
+    }
+}
+
+
+/* Wide screens: the scene sits in a rounded invitation card so the decoration never stops at a hard edge */
+@media(min-width: 700px) {
+    .save-date {
+        padding: clamp(36px,5vw,64px) 24px
+    }
+
+    .sd-stage {
+        overflow: hidden;
+        border: 1px solid #ecdcb9;
+        border-radius: 30px;
+        background: linear-gradient(180deg,#fffaf0,#faf0de);
+        box-shadow: 0 24px 60px rgba(120,80,30,.16),inset 0 0 0 6px rgba(255,255,255,.5)
+    }
+}
+
+.sd-top,
+.sd-lotus {
+    overflow: visible
+}
