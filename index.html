@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff" />
+  <meta name="description" content="You are warmly invited to the wedding of Ramesh Kumar and Tamil Selvi, 15 November 2026, Kurinjii Mahal, Muthanampalayam, Tiruppur." />
 
   <title>Ramesh Kumar & Tamil Selvi — Wedding Invitation</title>
 
@@ -11,7 +12,7 @@
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Ballet&family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Great+Vibes&family=Montserrat:wght@400;500;600&family=Noto+Serif+Tamil:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -37,8 +38,8 @@
       <div class="ganesha-wrap">
         <img class="ganesha" src="https://pub-1953a6673e864f3488c645252f75de98.r2.dev/may/Hemadri%20%26%20Ravindra/GAnesha%20Icon.png" alt="Lord Ganesha" />
       </div>
-      <p class="tamil-heading">திருமணம் அழைப்பிதழ்</p>
-      <div class="kural">
+      <p class="tamil-heading" lang="ta">திருமணம் அழைப்பிதழ்</p>
+      <div class="kural" lang="ta">
         <p><span class="kural-line">அன்பும் அறனும் உடைத்தாயின் இல்வாழ்க்கை</span><span class="kural-line">பண்பும் பயனும் அது.</span></p>
         <span>— திருக்குறள் 45</span>
         <p><span>கணவன் மனைவியருக்குள் அன்புப் பிணைப்பும், அறநெறிப்படியே நிகழ்ந்து வருவதும் உடையதானால், இல்வாழ்க்கையில் பண்பும் பயனும் அந்த வாழ்வே ஆகும்</span></p>
@@ -58,53 +59,68 @@
       <div class="scroll-cue">Scroll to Reveal <span>↓</span></div>
     </section>
 
-    <section class="section date-section reveal">
-      <p class="eyebrow">The Date</p>
-      <h2>Save the Date</h2>
-      <p class="section-intro">Scratch below to reveal our wedding date</p>
-      <div class="reveal-grid">
-        <button class="reveal-card" data-reveal aria-label="Scratch to reveal day">
-          <div class="reveal-content"><span class="label">Day</span><strong>15</strong></div>
-          <div class="scratch-cover"><span>Date</span><small>↑ SCRATCH</small></div>
-        </button>
-        <button class="reveal-card" data-reveal aria-label="Scratch to reveal month">
-          <div class="reveal-content"><span class="label">Month</span><strong>November</strong></div>
-          <div class="scratch-cover"><span>Month</span><small>↑ SCRATCH</small></div>
-        </button>
-        <button class="reveal-card" data-reveal aria-label="Scratch to reveal year">
-          <div class="reveal-content"><span class="label">Year</span><strong>2026</strong></div>
-          <div class="scratch-cover"><span>Year</span><small>↑ SCRATCH</small></div>
-        </button>
+    <section class="section countdown-section reveal" id="countdown" data-target="2026-11-15T07:45:00+05:30" aria-labelledby="cdTitle">
+      <svg class="cd-defs" width="0" height="0" aria-hidden="true" focusable="false">
+        <defs>
+          <symbol id="cdLotus" viewBox="0 0 120 72">
+            <path d="M8 62C28 40 52 48 60 66 40 72 20 72 8 62z" fill="#8aa56a"/>
+            <path d="M112 62C92 40 68 48 60 66 80 72 100 72 112 62z" fill="#7d9a60"/>
+            <path d="M60 66C30 62 18 44 22 30 42 34 56 48 60 66z" fill="#eaa0b0"/>
+            <path d="M60 66C90 62 102 44 98 30 78 34 64 48 60 66z" fill="#eaa0b0"/>
+            <path d="M60 66C40 58 36 36 46 18 58 30 62 48 60 66z" fill="#f1b4c0"/>
+            <path d="M60 66C80 58 84 36 74 18 62 30 58 48 60 66z" fill="#f1b4c0"/>
+            <path d="M60 66C48 52 50 28 60 8 70 28 72 52 60 66z" fill="#f8cdd6" stroke="#d9667f" stroke-width=".8"/>
+            <circle cx="60" cy="62" r="3" fill="#caa34a"/>
+          </symbol>
+        </defs>
+      </svg>
+      <canvas class="cd-confetti" id="cdConfetti" aria-hidden="true"></canvas>
+      <svg class="cd-lotus cd-lotus-l" viewBox="0 0 120 72" aria-hidden="true"><use href="#cdLotus"/></svg>
+      <svg class="cd-lotus cd-lotus-r" viewBox="0 0 120 72" aria-hidden="true"><use href="#cdLotus"/></svg>
+
+      <h2 class="cd-title" id="cdTitle">Save The Date</h2>
+      <div class="cd-orn" aria-hidden="true"><span></span><i>✦</i><span></span></div>
+
+      <div class="cd-plaque" id="cdPlaque">
+        <p class="cd-kicker">The day we say &ldquo;I Do&rdquo;</p>
+        <p class="cd-date" aria-label="15 November 2026">15 . 11 . 2026</p>
+        <p class="cd-day">On November 15th 2026 (Sunday)</p>
+        <canvas class="cd-scratch" id="cdScratch" role="button" tabindex="0" aria-label="Scratch to reveal the wedding date. Press Enter to reveal."></canvas>
       </div>
-      <p class="date-line">A new chapter, woven with two hearts and the blessings of family</p>
-      <p class="location-line">Thirumanam&nbsp; 15 · 11 · 2026 · Tiruppur</p>
-      <div id="countdown" class="countdown" aria-label="Countdown to wedding">
-        <div><strong id="days">00</strong><span>Days</span></div>
-        <div><strong id="hours">00</strong><span>Hours</span></div>
-        <div><strong id="mins">00</strong><span>Mins</span></div>
-        <div><strong id="secs">00</strong><span>Secs</span></div>
+
+      <div class="cd-timer" id="cdTimer" role="group" aria-label="Time remaining until the wedding">
+        <div class="cd-unit"><b id="cdDays">00</b><span>Days</span></div>
+        <div class="cd-unit"><b id="cdHours">00</b><span>Hours</span></div>
+        <div class="cd-unit"><b id="cdMins">00</b><span>Mins</span></div>
+        <div class="cd-unit"><b id="cdSecs">00</b><span>Secs</span></div>
       </div>
-      <div id="celebrationBurst" class="celebration-burst" aria-hidden="true"></div>
+      <p class="cd-note" id="cdNote" hidden>The celebration has begun &mdash; thank you for being a part of it.</p>
     </section>
 
-    <section class="section story-section reveal">
-      <p class="eyebrow">Our Story</p>
-      <h2>Our Little<br>Story</h2>
-      <p class="story-lead">Two hearts, two families, one beautiful beginning — and a new chapter waiting to unfold.</p>
-      <div class="story-frame">
-        <div id="storyTrack" class="story-track">
-          <img src="./assets/story-01.png" alt="Our story — chapter 1" draggable="false">
-          <img src="./assets/story-02.png" alt="Our story — chapter 2" draggable="false">
-          <img src="./assets/story-03.png" alt="Our story — chapter 3" draggable="false">
-          <img src="./assets/story-04.png" alt="Our story — chapter 4" draggable="false">
-          <img src="./assets/story-05.png" alt="Our story — chapter 5" draggable="false">
-          <img src="./assets/story-06.png" alt="Our story — chapter 6" draggable="false">
-        </div>
-      </div>
-      <div class="story-controls">
-        <button id="storyPrev" class="story-btn" aria-label="Previous story photo">←</button>
-        <div class="story-meta"><span id="storyCount">01 / 06</span><span>swipe or tap to continue</span></div>
-        <button id="storyNext" class="story-btn" aria-label="Next story photo">→</button>
+    <section class="section gallery-section reveal" id="gallery">
+      <p class="eyebrow">Moments</p>
+      <h2>Gallery</h2>
+      <div class="section-rule" aria-hidden="true"></div>
+      <p class="section-intro">Moments from our journey together. Tap any photo to view it larger.</p>
+      <div class="gallery-grid" id="galleryGrid">
+        <button type="button" class="gallery-item is-land" style="--pos:50% 38%" aria-label="Open photo 1">
+          <img src="./assets/story-01.png" alt="Groom with folded hands during the wedding ceremony" width="886" height="588" loading="lazy" decoding="async">
+        </button>
+        <button type="button" class="gallery-item is-port" style="--pos:50% 30%" aria-label="Open photo 2">
+          <img src="./assets/story-02.png" alt="Bride and groom seated together during the rituals" width="424" height="588" loading="lazy" decoding="async">
+        </button>
+        <button type="button" class="gallery-item is-port" style="--pos:50% 35%" aria-label="Open photo 3">
+          <img src="./assets/story-03.png" alt="Bride smiling as a blessing is applied to her forehead" width="432" height="540" loading="lazy" decoding="async">
+        </button>
+        <button type="button" class="gallery-item is-land" style="--pos:50% 40%" aria-label="Open photo 4">
+          <img src="./assets/story-04.png" alt="Couple smiling and pointing during the ceremony" width="886" height="588" loading="lazy" decoding="async">
+        </button>
+        <button type="button" class="gallery-item is-port" style="--pos:50% 28%" aria-label="Open photo 5">
+          <img src="./assets/story-05.png" alt="Bride in her wedding saree and flower garlands" width="424" height="588" loading="lazy" decoding="async">
+        </button>
+        <button type="button" class="gallery-item is-port" data-auto aria-label="Open photo 6">
+          <img src="./assets/story-06.png" alt="Wedding gallery photo 6" loading="lazy" decoding="async">
+        </button>
       </div>
     </section>
 
@@ -269,8 +285,8 @@
             <button type="button" class="chip" data-text="Happy married life.">Happy married life</button>
             <button type="button" class="chip" data-text="God bless you both.">God bless you both</button>
             <button type="button" class="chip" data-text="Wishing you a lifetime of love.">A lifetime of love</button>
-            <button type="button" class="chip" data-text="திருமண வாழ்த்துக்கள்!">திருமண வாழ்த்துக்கள்</button>
-            <button type="button" class="chip" data-text="வாழ்க வளமுடன்!">வாழ்க வளமுடன்</button>
+            <button type="button" class="chip" lang="ta" data-text="திருமண வாழ்த்துக்கள்!">திருமண வாழ்த்துக்கள்</button>
+            <button type="button" class="chip" lang="ta" data-text="வாழ்க வளமுடன்!">வாழ்க வளமுடன்</button>
           </div>
           <fieldset class="stickers">
             <legend class="chip-label">Pick a sticker for your card</legend>
@@ -324,6 +340,16 @@
       </a>
     </footer>
   </main>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
+    <button type="button" class="lb-btn lb-close" id="lbClose" aria-label="Close photo viewer">&times;</button>
+    <button type="button" class="lb-btn lb-nav lb-prev" id="lbPrev" aria-label="Previous photo">&#8249;</button>
+    <figure class="lb-stage">
+      <img id="lbImg" alt="">
+      <figcaption id="lbCount" class="lb-count"></figcaption>
+    </figure>
+    <button type="button" class="lb-btn lb-nav lb-next" id="lbNext" aria-label="Next photo">&#8250;</button>
+  </div>
 
   <div id="wishBurst" class="wish-burst" aria-hidden="true"></div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
