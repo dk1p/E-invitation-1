@@ -2190,7 +2190,7 @@ html.lb-open body {
 }
 
 /* =========================================================
-   SAVE THE DATE: picture, scratch-to-reveal date, countdown
+   SAVE THE DATE: picture, date plate, countdown
 ========================================================= */
 .save-date {
     position: relative;
@@ -2283,7 +2283,7 @@ html.lb-open body {
     transform: scaleX(-1)
 }
 
-/* Scratch plate */
+/* Date plate: appears when the guest scrolls to it */
 .sd-plate {
     position: relative;
     width: min(100%,440px);
@@ -2337,55 +2337,44 @@ html.lb-open body {
     color: #6f2f3a
 }
 
-.sd-scratch {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    cursor: pointer;
-    touch-action: pan-y;
-    transition: opacity .8s ease
-}
-
-.sd-scratch:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: -4px
-}
-
-.sd-shine {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    pointer-events: none;
-    background: linear-gradient(105deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);
-    transform: translateX(-130%);
-    animation: sdShine 3.4s ease-in-out 1s infinite
-}
-
-@keyframes sdShine {
-    55%,100% { transform: translateX(130%) }
-}
-
-.save-date.is-revealed .sd-scratch {
+/* Everything below appears, one piece after another, as the guest scrolls to this place */
+.sd-plate {
     opacity: 0;
-    pointer-events: none
+    transform: translateY(22px) scale(.95);
+    transition: opacity 1s ease,transform 1.1s cubic-bezier(.2,.8,.2,1)
 }
 
-.save-date.is-revealed .sd-shine {
-    display: none
+.sd-date p {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .8s ease,transform .8s ease,letter-spacing 1.6s ease
+}
+
+.sd-big {
+    letter-spacing: .2em
 }
 
 .save-date.is-revealed .sd-plate {
-    animation: sdGlow 1.6s ease-out
+    opacity: 1;
+    transform: none;
+    animation: sdGlow 1.8s ease-out 1s
 }
+
+.save-date.is-revealed .sd-date p {
+    opacity: 1;
+    transform: none
+}
+
+.save-date.is-revealed .sd-kicker { transition-delay: .45s }
+.save-date.is-revealed .sd-big { transition-delay: .75s; letter-spacing: .06em }
+.save-date.is-revealed .sd-sub { transition-delay: 1.1s }
 
 @keyframes sdGlow {
-    0% { box-shadow: 0 0 0 0 rgba(201,168,88,.7),0 12px 26px rgba(120,80,30,.16) }
-    100% { box-shadow: 0 0 0 26px rgba(201,168,88,0),0 12px 26px rgba(120,80,30,.16) }
+    0% { box-shadow: 0 0 0 0 rgba(201,168,88,.7),0 12px 26px rgba(120,80,30,.16),inset 0 0 0 5px rgba(255,255,255,.35) }
+    100% { box-shadow: 0 0 0 26px rgba(201,168,88,0),0 12px 26px rgba(120,80,30,.16),inset 0 0 0 5px rgba(255,255,255,.35) }
 }
 
-/* Countdown shown after the date is revealed */
+/* Countdown fades in last */
 .sd-countdown {
     display: grid;
     grid-template-columns: repeat(4,minmax(0,1fr));
@@ -2393,7 +2382,7 @@ html.lb-open body {
     margin: clamp(16px,4vw,24px) auto 0;
     opacity: 0;
     transform: translateY(14px);
-    transition: opacity .9s ease .5s,transform .9s ease .5s
+    transition: opacity .9s ease 1.7s,transform .9s ease 1.7s
 }
 
 .save-date.is-revealed .sd-countdown {
@@ -2487,8 +2476,17 @@ html.lb-open body {
 }
 
 @media(prefers-reduced-motion:reduce) {
-    .sd-flame,
-    .sd-shine { animation: none }
+    .sd-flame { animation: none }
+
+    .sd-plate,
+    .sd-date p {
+        opacity: 1;
+        transform: none;
+        transition: none;
+        animation: none
+    }
+
+    .sd-big { letter-spacing: .06em }
 
     .sd-photo img {
         opacity: 1;
