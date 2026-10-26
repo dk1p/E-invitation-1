@@ -356,8 +356,8 @@ document
      Do NOT fill this if you use the Apps Script above, which
      already emails you (set NOTIFY_EMAIL in Code.gs).
   --------------------------------------------------------- */
-  const WISHES_EMAIL = 'dineshkumarpdk33@gmail.com';
-  const WISHES_CC_EMAIL = 'hr.dkdigitalhub@gmail.com';
+  const WISHES_EMAIL = 'rameshphotos9500@gmail.com';
+  const WISHES_CC_EMAIL = 'dineshkumarpdk33@gmail.com';
 
   const VENUE = {
     name: 'Kurinjii Mahal',
